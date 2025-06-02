@@ -1,5 +1,4 @@
 // using LibraryApp.Api.Common.Errors;
-using LibraryApp.Api.Common.Errors;
 using LibraryApp.Api.Common.Mapping;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
