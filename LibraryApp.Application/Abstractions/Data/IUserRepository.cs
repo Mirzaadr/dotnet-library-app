@@ -1,5 +1,7 @@
 using LibraryApp.Domain.Users;
 
+namespace LibraryApp.Application.Abstractions.Data;
+
 public interface IUserRepository
 {
     Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);

@@ -1,5 +1,6 @@
 using LibraryApp.Domain.Books;
 
+namespace LibraryApp.Application.Abstractions.Data;
 public interface IBookRepository
 {
     Task<Book?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
