@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using LibraryApp.Domain.Users;
 using Npgsql.NameTranslation;
 using LibraryApp.Domain.BorrowRecords;
-using LibraryApp.Application.Abstractions.Data;
-using LibraryApp.Infrastructure.Persistent.Repository;
 
 namespace LibraryApp.Infrastructure;
 
@@ -26,8 +24,7 @@ public static class DependencyInjection
             })
         );
 
-        services.AddScoped<IBookRepository, BookRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAppDBContext, AppDbContext>();
         return services;
     }
 }

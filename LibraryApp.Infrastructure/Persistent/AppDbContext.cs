@@ -2,12 +2,11 @@ using LibraryApp.Domain.Books;
 using LibraryApp.Domain.BorrowRecords;
 using LibraryApp.Domain.Users;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 using Npgsql.NameTranslation;
 
 namespace DinnerApp.Infrastructure.Persistence;
 
-public partial class AppDbContext : DbContext
+public partial class AppDbContext : DbContext, IAppDBContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     { }

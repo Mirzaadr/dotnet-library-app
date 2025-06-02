@@ -1,35 +1,48 @@
-using LibraryApp.Application.Abstractions.Data;
 using LibraryApp.Domain.Common.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Application.Books.Get;
 
 public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, Result<List<GetBooksResponse>>>
 {
-    private readonly IBookRepository _bookRepository;
+    private readonly IAppDBContext _context;
 
-    public GetBooksQueryHandler(IBookRepository bookRepository)
+    public GetBooksQueryHandler(IAppDBContext context)
     {
-      _bookRepository = bookRepository;
+        _context = context;
     }
-    
-    public async Task<Result<List<GetBooksResponse>>> Handle(GetBooksQuery request, CancellationToken cancellationToken)
+
+    public async Task<Result<List<GetBooksResponse>>> Handle(GetBooksQuery query, CancellationToken cancellationToken)
     {
-        var books = await _bookRepository.SearchAsync(request.PageNumber, request.PageSize, request.SearchTerm, cancellationToken);
-        return books.Select(book => new GetBooksResponse
+        var bookQuery = _context.Books.AsQueryable();
+
+        if (!string.IsNullOrEmpty(query.SearchTerm))
         {
-            Id = book.Id.Value,
-            Title = book.Title,
-            Author = book.Author,
-            Genre = book.Genre,
-            Rating = book.Rating,
-            CoverUrl = book.CoverUrl,
-            CoverColor = book.CoverColor,
-            TotalCopies = book.TotalCopies,
-            AvailableCopies = book.AvailableCopies,
-            Summary = book.Summary,
-            CreatedAt = book.CreatedAt,
-            UpdatedAt = book.UpdatedAt
-        }).ToList();
+            bookQuery = bookQuery.Where(b => b.Title.Contains(query.SearchTerm) || b.Author.Contains(query.SearchTerm));
+        }
+
+        var books = await bookQuery
+          .OrderBy(b => b.CreatedAt)
+          .Skip((query.PageNumber - 1) * query.PageSize)
+          .Take(query.PageSize)
+          .Select(book => new GetBooksResponse
+          {
+              Id = book.Id.Value,
+              Title = book.Title,
+              Author = book.Author,
+              Genre = book.Genre,
+              Rating = book.Rating,
+              CoverUrl = book.CoverUrl,
+              CoverColor = book.CoverColor,
+              TotalCopies = book.TotalCopies,
+              AvailableCopies = book.AvailableCopies,
+              Summary = book.Summary,
+              CreatedAt = book.CreatedAt,
+              UpdatedAt = book.UpdatedAt
+          })
+          .ToListAsync(cancellationToken);
+
+        return books;
     }
 }
