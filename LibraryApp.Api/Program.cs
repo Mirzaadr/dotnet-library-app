@@ -17,5 +17,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseExceptionHandler("/error");
+app.UseStatusCodePages();
 app.UseHttpsRedirection();
 app.Run();

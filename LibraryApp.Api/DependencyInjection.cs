@@ -12,6 +12,8 @@ public static class DependencyInjection
         services.AddControllers();
         services.AddMappings();
         services.AddOpenApi();
+        // services.AddSingleton<ProblemDetailsFactory, AppProblemDetailFactory>();
+        services.AddProblemDetails();
         return services;
     }
 }
