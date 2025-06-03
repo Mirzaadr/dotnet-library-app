@@ -72,7 +72,7 @@ public partial class Book : AggregateRoot<BookId>
         Description = description;
         VideoUrl = videoUrl;
         Summary = summary;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     // ✅ Inventory methods
@@ -81,7 +81,7 @@ public partial class Book : AggregateRoot<BookId>
         if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
         TotalCopies += count;
         AvailableCopies += count;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     public void RemoveCopies(int count)
@@ -90,20 +90,20 @@ public partial class Book : AggregateRoot<BookId>
         if (count > AvailableCopies) throw new InvalidOperationException("Cannot remove more copies than are available.");
         TotalCopies -= count;
         AvailableCopies -= count;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     public void MarkAsBorrowed()
     {
         if (AvailableCopies <= 0) throw new InvalidOperationException("No copies available to borrow.");
         AvailableCopies--;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     public void MarkAsReturned()
     {
         if (AvailableCopies >= TotalCopies) throw new InvalidOperationException("All copies are already returned.");
         AvailableCopies++;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 }

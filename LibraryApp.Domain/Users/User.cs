@@ -31,8 +31,8 @@ public partial class User : AggregateRoot<UserId>
         string fullName,
         string email,
         int universityId,
-        string hashedPassword,
         string universityCard,
+        string hashedPassword,
         RoleEnum role = RoleEnum.USER) : base(id)
     {
         FullName = fullName;
@@ -42,7 +42,7 @@ public partial class User : AggregateRoot<UserId>
         UniversityCard = universityCard;
         RoleValue = role;
         StatusValue = StatusEnum.PENDING;
-        CreatedAt = DateTime.UtcNow;
+        // CreatedAt = DateTime.UtcNow;
     }
 
     // ✅ Update profile
@@ -50,27 +50,27 @@ public partial class User : AggregateRoot<UserId>
     {
         FullName = fullName;
         UniversityCard = universityCard;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     // ✅ Change password
     public void ChangePassword(string hashedPassword)
     {
         Password = hashedPassword;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     // ✅ Mark last activity
     public void UpdateLastActivity()
     {
-        LastActivityDate = DateTime.UtcNow;
+        LastActivityDate = DateTime.Now;
     }
 
     // ✅ Change role (admin function)
     public void ChangeRole(RoleEnum newRole)
     {
         RoleValue = newRole;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     // ✅ Activate/deactivate account
@@ -78,13 +78,13 @@ public partial class User : AggregateRoot<UserId>
     {
         if (StatusValue == StatusEnum.REJECTED) return;
         StatusValue = StatusEnum.REJECTED;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     public void Activate()
     {
         if (StatusValue == StatusEnum.APPROVED) return;
         StatusValue = StatusEnum.APPROVED;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 }

@@ -33,7 +33,7 @@ public partial class BorrowRecord : AggregateRoot<BorrowRecordId>
         BorrowDate = DateTime.UtcNow;
         DueDate = dueDate;
         StatusValue = BorrowStatusEnum.BORROWED;
-        CreatedAt = DateTime.UtcNow;
+        // CreatedAt = DateTime.UtcNow;
     }
 
     // ✅ Mark as returned
@@ -44,7 +44,7 @@ public partial class BorrowRecord : AggregateRoot<BorrowRecordId>
 
         ReturnDate = DateOnly.FromDateTime(DateTime.UtcNow);
         StatusValue = BorrowStatusEnum.RETURNED;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 
     // ✅ Mark as overdue
@@ -70,6 +70,6 @@ public partial class BorrowRecord : AggregateRoot<BorrowRecordId>
             throw new ArgumentException("New due date must be later than current due date.");
 
         DueDate = newDueDate;
-        UpdatedAt = DateTime.UtcNow;
+        // UpdatedAt = DateTime.UtcNow;
     }
 }
