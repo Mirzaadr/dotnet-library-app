@@ -37,7 +37,7 @@ public class GetBooksQueryHandler : IRequestHandler<GetBookByIdQuery, Result<Get
 
         if (book is null)
         {
-            return Result.Failure<GetBookByIdResponse>(Error.NotFound("Books.NotFound", "Book not found."));
+            return Result.Failure<GetBookByIdResponse>(BookErrors.NotFound(request.Id));
         }
         return book;
     }
