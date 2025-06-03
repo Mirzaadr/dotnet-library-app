@@ -21,16 +21,12 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    [Authorize]
+    public async Task<IActionResult> Get(int page = 1, int pageSize = 10)
     {
-      // var books = await _context.Books
-      //     .OrderBy(b => b.CreatedAt)
-      //     .Take(10)
-      //     .Select(b => b.Adapt<BookResponse>())
-      //     .ToListAsync();
-      var query = new GetBooksQuery(1, 10, null);
-      var books = await _mediator.Send(query);
-      return Ok(books.Value);
+        var query = new GetBooksQuery(page, pageSize, null);
+        var books = await _mediator.Send(query);
+        return Ok(books.Value);
     }
 
     [HttpGet("{id}")]

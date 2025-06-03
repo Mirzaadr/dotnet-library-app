@@ -10,7 +10,6 @@ builder.Services
     .AddPresentation();
 
 var app = builder.Build();
-app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
@@ -20,4 +19,9 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler("/error");
 app.UseStatusCodePages();
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 app.Run();

@@ -3,12 +3,14 @@ using DinnerApp.Infrastructure.Persistence;
 using LibraryApp.Api.Models;
 using LibraryApp.Domain.Users;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Api.Controller;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
