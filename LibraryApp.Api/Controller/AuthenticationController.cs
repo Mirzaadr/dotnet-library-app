@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibraryApp.Api.Controller;
 
 [ApiController]
-[Route("auth")]
+[Route("api/v1/auth")]
 public class AuthenticationController : ControllerBase
 {
     private readonly ISender _mediator;
@@ -66,5 +66,13 @@ public class AuthenticationController : ControllerBase
         }
 
         return Ok(new { token = result.Value });
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        // TODO: implement get current user based on JWT
+        await Task.CompletedTask;
+        return Ok();
     }
 }
