@@ -54,7 +54,7 @@ public class BorrowRecordController : ControllerBase
     [HttpPut("{id}/pickup")] // management
     public async Task<IActionResult> PickupBook(Guid id)
     {
-        //TODO: implement function to change record status to borrow
+        //implement function to change record status to borrow
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
         {
@@ -82,7 +82,7 @@ public class BorrowRecordController : ControllerBase
     [HttpPut("{id}/return")] // management
     public async Task<IActionResult> ReturnBook(Guid id)
     {
-        //TODO: implement function to change record status to return
+        //implement function to change record status to return
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
         {
