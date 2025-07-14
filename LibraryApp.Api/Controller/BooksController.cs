@@ -1,16 +1,13 @@
-using DinnerApp.Infrastructure.Persistence;
 using LibraryApp.Api.Models;
 using LibraryApp.Application.Books.Create;
 using LibraryApp.Application.Books.Delete;
 using LibraryApp.Application.Books.Get;
 using LibraryApp.Application.Books.Update;
-using LibraryApp.Domain.Books;
 using LibraryApp.Domain.Common.Models;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Api.Controller;
 
@@ -31,7 +28,7 @@ public class BooksController : ControllerBase
   {
     var query = new GetBooksQuery(page, pageSize, null);
     var books = await _mediator.Send(query);
-    return Ok(books.Value);
+    return Ok(books.Value.Adapt<List<BookResponse>>());
   }
 
   [HttpGet("{id}")] // public
@@ -48,7 +45,7 @@ public class BooksController : ControllerBase
             detail: $"No book found with ID {id}"
         );
     }
-    return Ok(bookResult.Value);
+    return Ok(bookResult.Value.Adapt<BookResponse>());
   }
 
   [HttpPost] // admin, management
@@ -99,7 +96,7 @@ public class BooksController : ControllerBase
                 detail: result.Error.Description
             );
         }
-    return Ok(id);
+    return NoContent();
   }
 
   [HttpDelete("{id}")] // admin
@@ -124,6 +121,6 @@ public class BooksController : ControllerBase
                 detail: result.Error.Description
             );
         }
-    return Ok(id);
+    return NoContent();
   }
 }
