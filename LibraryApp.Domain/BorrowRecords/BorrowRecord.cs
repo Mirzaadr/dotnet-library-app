@@ -32,8 +32,16 @@ public partial class BorrowRecord : AggregateRoot<BorrowRecordId>
         BookId = bookId;
         BorrowDate = DateTime.UtcNow;
         DueDate = dueDate;
-        StatusValue = BorrowStatusEnum.BORROWED;
+        StatusValue = BorrowStatusEnum.RESERVED;
         // CreatedAt = DateTime.UtcNow;
+    }
+
+    public void BorrowBook()
+    {
+        if (StatusValue != BorrowStatusEnum.RESERVED)
+            throw new InvalidOperationException("Cannot borrow a book that hass not been reserved.");
+
+        StatusValue = BorrowStatusEnum.BORROWED;
     }
 
     // ✅ Mark as returned
@@ -44,21 +52,20 @@ public partial class BorrowRecord : AggregateRoot<BorrowRecordId>
 
         ReturnDate = DateOnly.FromDateTime(DateTime.UtcNow);
         StatusValue = BorrowStatusEnum.RETURNED;
-        // UpdatedAt = DateTime.UtcNow;
     }
 
     // ✅ Mark as overdue
-    // public void MarkAsOverdue()
-    // {
-    //     if (StatusValue != BorrowStatusEnum.BORROWED)
-    //         throw new InvalidOperationException("Only borrowed records can become overdue.");
+    public void MarkAsOverdue()
+    {
+        if (StatusValue != BorrowStatusEnum.BORROWED)
+            throw new InvalidOperationException("Only borrowed records can become overdue.");
 
-    //     if (DueDate < DateOnly.FromDateTime(DateTime.UtcNow))
-    //     {
-    //         StatusValue = BorrowStatusEnum.OVERDUE;
-    //         UpdatedAt = DateTime.UtcNow;
-    //     }
-    // }
+        if (DueDate < DateOnly.FromDateTime(DateTime.UtcNow))
+        {
+            StatusValue = BorrowStatusEnum.OVERDUE;
+            UpdatedAt = DateTime.UtcNow;
+        }
+    }
 
     // ✅ Extend due date
     public void ExtendDueDate(DateOnly newDueDate)
