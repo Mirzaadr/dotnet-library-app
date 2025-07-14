@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using LibraryApp.Api.Models;
+using LibraryApp.Application.BorrowRecords.BorrowBook;
 using LibraryApp.Application.BorrowRecords.Get;
 using LibraryApp.Application.BorrowRecords.GetById;
 using LibraryApp.Application.BorrowRecords.GetByUserId;
@@ -22,10 +23,30 @@ public class BorrowRecordController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> BorrowBook() // user
+    public async Task<IActionResult> BorrowBook([FromBody] BorrowBookRequest request) // user
     {
-        //TODO: implement function to reserve book 
-        return Ok();
+        //implement function to reserve book
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: "Unauthorized",
+                detail: "User identifier not found."
+            );
+        }
+        var command = new BorrowBookCommand(Guid.Parse(userId), request.BookId);
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status500InternalServerError,
+                title: "Internal Server Error",
+                detail: $"Something happened"
+            );
+        }
+        return Created();
     }
 
     [HttpPut("{id}/pickup")] // management
