@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using LibraryApp.Api.Models;
 using LibraryApp.Application.BorrowRecords.Get;
 using LibraryApp.Application.BorrowRecords.GetById;
+using LibraryApp.Application.BorrowRecords.GetByUserId;
 using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Api.Controller;
@@ -40,10 +43,29 @@ public class BorrowRecordController : ControllerBase
     }
 
     [HttpGet("mine")] // user
-    public async Task<IActionResult> GetUserRecords()
+    [Authorize]
+    public async Task<IActionResult> GetUserRecords(int page = 1, int pageSize = 10)
     {
-        //TODO: implement function to return all borrow record for the user
-        return Ok();
+        //implement function to return all borrow record for the user
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: "Unauthorized",
+                detail: "User identifier not found."
+            );
+        }
+        var records = await _mediator.Send(new GetBorrowRecordByUserIdQuery(Guid.Parse(userId), page, pageSize, null));
+        if (records.IsFailure)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found",
+                detail: $"No record found with UserID {userId}"
+            );
+        }
+        return Ok(records.Value.Adapt<List<BorrowRecordResponse>>());
     }
 
     [HttpGet] // admin, management
@@ -75,6 +97,6 @@ public class BorrowRecordController : ControllerBase
                 detail: $"No record found with ID {id}"
             );
         }
-        return Ok(record.Adapt<BorrowRecordResponse>());
+        return Ok(record.Value.Adapt<BorrowRecordResponse>());
     }
 }
