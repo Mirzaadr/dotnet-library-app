@@ -83,7 +83,7 @@ public partial class User : AggregateRoot<UserId>
 
     public void Activate()
     {
-        if (StatusValue != StatusEnum.PENDING) return;
+        if (StatusValue == StatusEnum.APPROVED) return;
         StatusValue = StatusEnum.APPROVED;
         // UpdatedAt = DateTime.UtcNow;
     }
