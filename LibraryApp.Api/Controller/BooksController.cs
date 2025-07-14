@@ -1,7 +1,11 @@
 using DinnerApp.Infrastructure.Persistence;
 using LibraryApp.Api.Models;
+using LibraryApp.Application.Books.Create;
+using LibraryApp.Application.Books.Delete;
 using LibraryApp.Application.Books.Get;
+using LibraryApp.Application.Books.Update;
 using LibraryApp.Domain.Books;
+using LibraryApp.Domain.Common.Models;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -48,26 +52,78 @@ public class BooksController : ControllerBase
   }
 
   [HttpPost] // admin, management
-  public async Task<IActionResult> AddBook()
+  [Authorize]
+  public async Task<IActionResult> AddBook([FromBody] CreateBookCommand request)
   {
-    //TODO: implement function to add book
-    await Task.CompletedTask;
-    return Ok();
+    //implement function to add book
+    var result = await _mediator.Send(request);
+    if (result.IsFailure)
+        {
+            var statusCode = result.Error.Type switch
+            {
+                ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            return Problem(
+                statusCode: statusCode,
+                title: result.Error.Code,
+                detail: result.Error.Description
+            );
+        }
+    return Created();
   }
 
   [HttpPut("{id}")] // admin, management
-  public async Task<IActionResult> UpdateBook(Guid id)
+  [Authorize]
+  public async Task<IActionResult> UpdateBook(Guid id, [FromBody] UpdateBookCommand request)
   {
-    //TODO: implement function to update book
-    await Task.CompletedTask;
+    //implement function to update book
+    request.Id = id;
+    var result = await _mediator.Send(request);
+    if (result.IsFailure)
+        {
+            var statusCode = result.Error.Type switch
+            {
+                ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            return Problem(
+                statusCode: statusCode,
+                title: result.Error.Code,
+                detail: result.Error.Description
+            );
+        }
     return Ok(id);
   }
 
   [HttpDelete("{id}")] // admin
+  [Authorize]
   public async Task<IActionResult> DeleteBook(Guid id)
   {
-    //TODO: implement function to delete book 
-    await Task.CompletedTask;
+    //implement function to delete book 
+    var result = await _mediator.Send(new DeleteBookCommand(id));
+    if (result.IsFailure)
+        {
+            var statusCode = result.Error.Type switch
+            {
+                ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            return Problem(
+                statusCode: statusCode,
+                title: result.Error.Code,
+                detail: result.Error.Description
+            );
+        }
     return Ok(id);
   }
 }
