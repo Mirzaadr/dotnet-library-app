@@ -1,8 +1,12 @@
+using System.Security.Claims;
 using LibraryApp.Api.Models;
+using LibraryApp.Application.Users.GetById;
 using LibraryApp.Application.Users.Login;
 using LibraryApp.Application.Users.Register;
 using LibraryApp.Domain.Common.Models;
+using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Api.Controller;
@@ -69,10 +73,38 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpGet("me")]
+    [Authorize]
     public async Task<IActionResult> GetCurrentUser()
     {
-        // TODO: implement get current user based on JWT
-        await Task.CompletedTask;
-        return Ok();
+        //implement get current user based on JWT
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: "Unauthorized",
+                detail: "User identifier not found."
+            );
+        }
+        var query = new GetUserByIdQuery(Guid.Parse(userId));
+        var result = await _mediator.Send(query);
+
+        if (result.IsFailure)
+        {
+            var statusCode = result.Error.Type switch
+            {
+                ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            return Problem(
+                statusCode: statusCode,
+                title: result.Error.Code,
+                detail: result.Error.Description
+            );
+        }
+        return Ok(result.Value.Adapt<UserResponse>());
     }
 }
