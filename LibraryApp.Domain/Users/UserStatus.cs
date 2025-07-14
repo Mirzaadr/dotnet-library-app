@@ -6,13 +6,15 @@ public enum StatusEnum
 {
     PENDING,
     APPROVED,
-    REJECTED
+    REJECTED,
+    BLOCKED
 }
 public class UserStatus : Enumeration
 {
     public static readonly UserStatus Pending = new(1, "PENDING", StatusEnum.PENDING);
     public static readonly UserStatus Approved = new(2, "APPROVED", StatusEnum.APPROVED);
-    public static readonly UserStatus Rejected = new(2, "REJECTED", StatusEnum.REJECTED);
+    public static readonly UserStatus Rejected = new(3, "REJECTED", StatusEnum.REJECTED);
+    public static readonly UserStatus Rejected = new(4, "BLOCKED", StatusEnum.BLOCKED);
 
     public StatusEnum EnumValue { get; }
 

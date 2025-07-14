@@ -76,15 +76,22 @@ public partial class User : AggregateRoot<UserId>
     // ✅ Activate/deactivate account
     public void Deactivate()
     {
-        if (StatusValue == StatusEnum.REJECTED) return;
-        StatusValue = StatusEnum.REJECTED;
+        if (StatusValue != StatusEnum.APPROVED) return;
+        StatusValue = StatusEnum.BLOCKED;
         // UpdatedAt = DateTime.UtcNow;
     }
 
     public void Activate()
     {
-        if (StatusValue == StatusEnum.APPROVED) return;
+        if (StatusValue != StatusEnum.PENDING) return;
         StatusValue = StatusEnum.APPROVED;
+        // UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void Reject()
+    {
+        if (StatusValue != StatusEnum.PENDING) return;
+        StatusValue = StatusEnum.REJECTED;
         // UpdatedAt = DateTime.UtcNow;
     }
 }
