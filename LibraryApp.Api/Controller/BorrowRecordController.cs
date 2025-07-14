@@ -69,6 +69,7 @@ public class BorrowRecordController : ControllerBase
     }
 
     [HttpGet] // admin, management
+    [Authorize]
     public async Task<IActionResult> GetAllRecords(int page = 1, int pageSize = 10)
     {
         //implement function to get all books record with pagination
