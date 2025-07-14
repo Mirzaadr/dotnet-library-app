@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Application.BorrowRecords.GetById;
 
-public class GetBorrowRecordsQueryHandler : IRequestHandler<GetBorrowRecordByIdQuery, Result<BorrowRecord>>
+public class GetBorrowRecordByIdQueryHandler : IRequestHandler<GetBorrowRecordByIdQuery, Result<BorrowRecord>>
 {
     private readonly IAppDBContext _context;
 
-    public GetBorrowRecordsQueryHandler(IAppDBContext context)
+    public GetBorrowRecordByIdQueryHandler(IAppDBContext context)
     {
         _context = context;
     }
