@@ -13,11 +13,11 @@ public enum BorrowStatusEnum
 
 public class BorrowStatus : Enumeration
 {
-    public static readonly BorrowStatus Returned = new(1, "RESERVED", BorrowStatusEnum.RESERVED);
+    public static readonly BorrowStatus Reserved = new(1, "RESERVED", BorrowStatusEnum.RESERVED);
     public static readonly BorrowStatus Borrowed = new(2, "BORROWED", BorrowStatusEnum.BORROWED);
     public static readonly BorrowStatus Returned = new(3, "RETURNED", BorrowStatusEnum.RETURNED);
-    public static readonly BorrowStatus Overdue = new(3, "RETURNED", BorrowStatusEnum.RETURNED);
-    public static readonly BorrowStatus Cancelled = new(3, "CANCELLED", BorrowStatusEnum.CANCELLED);
+    public static readonly BorrowStatus Overdue = new(4, "RETURNED", BorrowStatusEnum.RETURNED);
+    public static readonly BorrowStatus Cancelled = new(5, "CANCELLED", BorrowStatusEnum.CANCELLED);
 
     public BorrowStatusEnum EnumValue { get; }
 
