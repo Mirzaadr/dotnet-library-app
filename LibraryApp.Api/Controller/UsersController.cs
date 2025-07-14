@@ -1,11 +1,11 @@
-using System.Threading.Tasks;
-using DinnerApp.Infrastructure.Persistence;
 using LibraryApp.Api.Models;
-using LibraryApp.Domain.Users;
+using LibraryApp.Application.Users.Get;
+using LibraryApp.Application.Users.GetById;
+using LibraryApp.Domain.Common.Models;
 using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Api.Controller;
 
@@ -14,34 +14,59 @@ namespace LibraryApp.Api.Controller;
 [Route("api/v1/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ISender _mediator;
 
-    public UsersController(AppDbContext context)
+    public UsersController(ISender mediator)
     {
-        _context = context;
+        _mediator = mediator;
     }
 
     [HttpGet] // admin
-    public async Task<IActionResult> GetAllUsers()
+    public async Task<IActionResult> GetAllUsers(int page = 1, int pageSize = 10)
     {
-        // TODO: implement function to get all user general data
-        var users = await _context.Users
-          .OrderBy(u => u.CreatedAt)
-          .Take(10)
-          .Select(u => u.Adapt<UserResponse>()).ToListAsync();
-      return Ok(users);
+        // implement function to get all user general data
+        var result = await _mediator.Send(new GetUsersQuery(page, pageSize, null));
+        if (result.IsFailure)
+        {
+            var statusCode = result.Error.Type switch
+            {
+                ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            return Problem(
+                statusCode: statusCode,
+                title: result.Error.Code,
+                detail: result.Error.Description
+            );
+        }
+        return Ok(result.Value);
     }
 
     [HttpGet("{id}")] // admin
     public async Task<IActionResult> GetUserById(Guid id)
     {
-      var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId.Create(id));
-      if (user is null)
-      {
-        return NotFound(new { Message = "User not found" });
-      }
+        var result = await _mediator.Send(new GetUserByIdQuery(id));
+        if (result.IsFailure)
+        {
+            var statusCode = result.Error.Type switch
+            {
+                ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            return Problem(
+                statusCode: statusCode,
+                title: result.Error.Code,
+                detail: result.Error.Description
+            );
+        }
       
-      return Ok(user.Adapt<UserDetailResponse>());
+        return Ok(result.Value.Adapt<UserDetailResponse>());
     }
 
     [HttpPut("{id}/status")] // admin
