@@ -4,6 +4,8 @@ using LibraryApp.Application.BorrowRecords.BorrowBook;
 using LibraryApp.Application.BorrowRecords.Get;
 using LibraryApp.Application.BorrowRecords.GetById;
 using LibraryApp.Application.BorrowRecords.GetByUserId;
+using LibraryApp.Application.BorrowRecords.PickupBook;
+using LibraryApp.Application.BorrowRecords.ReturnBook;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -53,14 +55,56 @@ public class BorrowRecordController : ControllerBase
     public async Task<IActionResult> PickupBook(Guid id)
     {
         //TODO: implement function to change record status to borrow
-        return Ok();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: "Unauthorized",
+                detail: "User identifier not found."
+            );
+        }
+        var command = new PickupBookCommand(Guid.Parse(userId), id);
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status500InternalServerError,
+                title: "Internal Server Error",
+                detail: $"Something happened"
+            );
+        }
+
+        return NoContent();
     }
 
     [HttpPut("{id}/return")] // management
-    public async Task<IActionResult> ReturnBook()
+    public async Task<IActionResult> ReturnBook(Guid id)
     {
         //TODO: implement function to change record status to return
-        return Ok();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: "Unauthorized",
+                detail: "User identifier not found."
+            );
+        }
+        var command = new ReturnBookCommand(Guid.Parse(userId), id);
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status500InternalServerError,
+                title: "Internal Server Error",
+                detail: $"Something happened"
+            );
+        }
+
+        return NoContent();
     }
 
     [HttpGet("mine")] // user
