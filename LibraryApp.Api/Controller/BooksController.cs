@@ -16,46 +16,45 @@ namespace LibraryApp.Api.Controller;
 [ApiVersion("1.0")]
 public class BooksController : ControllerBase
 {
-  private readonly ISender _mediator;
+    private readonly ISender _mediator;
 
-  public BooksController(ISender mediator)
-  {
-    _mediator = mediator;
-  }
-
-  [HttpGet] // public
-  // [Authorize]
-  public async Task<IActionResult> GetAllBooks(int page = 1, int pageSize = 10)
-  {
-    var query = new GetBooksQuery(page, pageSize, null);
-    var books = await _mediator.Send(query);
-    return Ok(books.Value.Adapt<List<BookResponse>>());
-  }
-
-  [HttpGet("{id}")] // public
-  public async Task<IActionResult> GetBookByID(Guid id)
-  {
-    // var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == BookId.Create(id));
-    var query = new GetBookByIdQuery(id);
-    var bookResult = await _mediator.Send(query);
-    if (bookResult.IsFailure)
+    public BooksController(ISender mediator)
     {
-      return Problem(
-            statusCode: StatusCodes.Status404NotFound,
-            title: "Book not found",
-            detail: $"No book found with ID {id}"
-        );
+        _mediator = mediator;
     }
-    return Ok(bookResult.Value.Adapt<BookResponse>());
-  }
 
-  [HttpPost] // admin, management
-  [Authorize]
-  public async Task<IActionResult> AddBook([FromBody] CreateBookCommand request)
-  {
-    //implement function to add book
-    var result = await _mediator.Send(request);
-    if (result.IsFailure)
+    [HttpGet] // public
+    public async Task<IActionResult> GetAllBooks(int page = 1, int pageSize = 10)
+    {
+        var query = new GetBooksQuery(page, pageSize, null);
+        var books = await _mediator.Send(query);
+        return Ok(books.Value.Adapt<List<BookResponse>>());
+    }
+
+    [HttpGet("{id}")] // public
+    public async Task<IActionResult> GetBookByID(Guid id)
+    {
+        // var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == BookId.Create(id));
+        var query = new GetBookByIdQuery(id);
+        var bookResult = await _mediator.Send(query);
+        if (bookResult.IsFailure)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Book not found",
+                detail: $"No book found with ID {id}"
+            );
+        }
+        return Ok(bookResult.Value.Adapt<BookResponse>());
+    }
+
+    [HttpPost] // admin, management
+    [Authorize]
+    public async Task<IActionResult> AddBook([FromBody] CreateBookCommand request)
+    {
+        //implement function to add book
+        var result = await _mediator.Send(request);
+        if (result.IsFailure)
         {
             var statusCode = result.Error.Type switch
             {
@@ -71,17 +70,17 @@ public class BooksController : ControllerBase
                 detail: result.Error.Description
             );
         }
-    return Created();
-  }
+        return Created();
+    }
 
-  [HttpPut("{id}")] // admin, management
-  [Authorize]
-  public async Task<IActionResult> UpdateBook(Guid id, [FromBody] UpdateBookCommand request)
-  {
-    //implement function to update book
-    request.Id = id;
-    var result = await _mediator.Send(request);
-    if (result.IsFailure)
+    [HttpPut("{id}")] // admin, management
+    [Authorize]
+    public async Task<IActionResult> UpdateBook(Guid id, [FromBody] UpdateBookCommand request)
+    {
+        //implement function to update book
+        request.Id = id;
+        var result = await _mediator.Send(request);
+        if (result.IsFailure)
         {
             var statusCode = result.Error.Type switch
             {
@@ -97,16 +96,16 @@ public class BooksController : ControllerBase
                 detail: result.Error.Description
             );
         }
-    return NoContent();
-  }
+        return NoContent();
+    }
 
-  [HttpDelete("{id}")] // admin
-  [Authorize]
-  public async Task<IActionResult> DeleteBook(Guid id)
-  {
-    //implement function to delete book 
-    var result = await _mediator.Send(new DeleteBookCommand(id));
-    if (result.IsFailure)
+    [HttpDelete("{id}")] // admin
+    [Authorize]
+    public async Task<IActionResult> DeleteBook(Guid id)
+    {
+        //implement function to delete book 
+        var result = await _mediator.Send(new DeleteBookCommand(id));
+        if (result.IsFailure)
         {
             var statusCode = result.Error.Type switch
             {
@@ -122,6 +121,6 @@ public class BooksController : ControllerBase
                 detail: result.Error.Description
             );
         }
-    return NoContent();
-  }
+        return NoContent();
+    }
 }
