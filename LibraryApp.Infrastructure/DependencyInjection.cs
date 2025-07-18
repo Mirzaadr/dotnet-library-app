@@ -27,6 +27,9 @@ public static class DependencyInjection
             .AddAuth(configuration)
             .AddPersistent(configuration);
 
+        services.AddHttpContextAccessor();
+        services.AddScoped<IUserContext, UserContext>();
+
         return services;
     }
 
