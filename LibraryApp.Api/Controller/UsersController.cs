@@ -16,7 +16,8 @@ namespace LibraryApp.Api.Controller;
 
 [ApiController]
 [Authorize]
-[Route("api/v1/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1.0")]
 public class UsersController : ControllerBase
 {
     private readonly ISender _mediator;

@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibraryApp.Api.Controller;
 
 [ApiController]
-[Route("api/v1/auth")]
+[Route("api/v{version:apiVersion}/auth")]
+[ApiVersion("1.0")]
 public class AuthenticationController : ControllerBase
 {
     private readonly ISender _mediator;

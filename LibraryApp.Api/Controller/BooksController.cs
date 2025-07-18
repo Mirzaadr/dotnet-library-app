@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibraryApp.Api.Controller;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1.0")]
 public class BooksController : ControllerBase
 {
   private readonly ISender _mediator;

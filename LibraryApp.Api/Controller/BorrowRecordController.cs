@@ -14,7 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibraryApp.Api.Controller;
 
 [ApiController]
-[Route("api/v1/borrows")]
+[Route("api/v{version:apiVersion}/borrows")]
+[ApiVersion("1.0")]
 public class BorrowRecordController : ControllerBase
 {
     private readonly ISender _mediator;
