@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using LibraryApp.Api.Models;
+using LibraryApp.Application.Abstractions.Authentication;
 using LibraryApp.Application.BorrowRecords.BorrowBook;
 using LibraryApp.Application.BorrowRecords.Get;
 using LibraryApp.Application.BorrowRecords.GetById;
@@ -19,26 +20,20 @@ namespace LibraryApp.Api.Controller;
 public class BorrowRecordController : ControllerBase
 {
     private readonly ISender _mediator;
+    private readonly IUserContext _userContext;
 
-    public BorrowRecordController(ISender mediator)
+    public BorrowRecordController(ISender mediator, IUserContext userContext)
     {
         _mediator = mediator;
+        _userContext = userContext;
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> BorrowBook([FromBody] BorrowBookRequest request) // user
     {
         //implement function to reserve book
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Problem(
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: "Unauthorized",
-                detail: "User identifier not found."
-            );
-        }
-        var command = new BorrowBookCommand(Guid.Parse(userId), request.BookId);
+        var command = new BorrowBookCommand(_userContext.UserId, request.BookId);
         var result = await _mediator.Send(command);
 
         if (result.IsFailure)
@@ -53,19 +48,10 @@ public class BorrowRecordController : ControllerBase
     }
 
     [HttpPut("{id}/pickup")] // management
-    public async Task<IActionResult> PickupBook(Guid id)
+    [Authorize]
+    public async Task<IActionResult> PickupBook(PickupBookCommand command)
     {
         //implement function to change record status to borrow
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Problem(
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: "Unauthorized",
-                detail: "User identifier not found."
-            );
-        }
-        var command = new PickupBookCommand(Guid.Parse(userId), id);
         var result = await _mediator.Send(command);
 
         if (result.IsFailure)
@@ -81,19 +67,10 @@ public class BorrowRecordController : ControllerBase
     }
 
     [HttpPut("{id}/return")] // management
-    public async Task<IActionResult> ReturnBook(Guid id)
+    [Authorize]
+    public async Task<IActionResult> ReturnBook(ReturnBookCommand command)
     {
         //implement function to change record status to return
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Problem(
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: "Unauthorized",
-                detail: "User identifier not found."
-            );
-        }
-        var command = new ReturnBookCommand(Guid.Parse(userId), id);
         var result = await _mediator.Send(command);
 
         if (result.IsFailure)
@@ -113,16 +90,8 @@ public class BorrowRecordController : ControllerBase
     public async Task<IActionResult> GetUserRecords(int page = 1, int pageSize = 10)
     {
         //implement function to return all borrow record for the user
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Problem(
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: "Unauthorized",
-                detail: "User identifier not found."
-            );
-        }
-        var records = await _mediator.Send(new GetBorrowRecordByUserIdQuery(Guid.Parse(userId), page, pageSize, null));
+        var userId = _userContext.UserId;
+        var records = await _mediator.Send(new GetBorrowRecordByUserIdQuery(userId, page, pageSize, null));
         if (records.IsFailure)
         {
             return Problem(
