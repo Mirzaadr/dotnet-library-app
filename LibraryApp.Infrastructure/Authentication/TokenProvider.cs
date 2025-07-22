@@ -11,6 +11,7 @@ using LibraryApp.Domain.Users;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.JsonWebTokens;
+using System.Security.Cryptography;
 
 internal sealed class TokenProvider : ITokenProvider
 {
@@ -44,6 +45,16 @@ internal sealed class TokenProvider : ITokenProvider
     var handler = new JsonWebTokenHandler();
 
     return handler.CreateToken(tokenDescriptor);
+  }
+
+  public string GenerateRefreshToken()
+  {
+    using (var rng = RandomNumberGenerator.Create())
+    {
+      var randomBytes = new byte[32];
+      rng.GetBytes(randomBytes);
+      return Convert.ToBase64String(randomBytes);
+    }
   }
 }
 
