@@ -5,4 +5,5 @@ namespace LibraryApp.Application.Abstractions.Authentication;
 public interface ITokenProvider
 {
   string Generate(User user);
+  string GenerateRefreshToken();
 }

@@ -3,6 +3,7 @@ using LibraryApp.Api.Models;
 using LibraryApp.Application.Users.GetById;
 using LibraryApp.Application.Abstractions.Authentication;
 using LibraryApp.Application.Users.Login;
+using LibraryApp.Application.Users.Refresh;
 using LibraryApp.Application.Users.Register;
 using LibraryApp.Domain.Common.Models;
 using Mapster;
@@ -73,7 +74,32 @@ public class AuthenticationController : ControllerBase
             );
         }
 
-        return Ok(new { token = result.Value });
+        return Ok(result.Value);
+    }
+
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshRequest request)
+    {
+        var query = new RefreshUserCommand(request.RefreshToken);
+        var result = await _mediator.Send(query);
+        if (result.IsFailure)
+        {
+            var statusCode = result.Error.Type switch
+            {
+                ErrorType.Validation or ErrorType.Problem => StatusCodes.Status400BadRequest,
+                ErrorType.NotFound => StatusCodes.Status404NotFound,
+                ErrorType.Conflict => StatusCodes.Status409Conflict,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
+            return Problem(
+                statusCode: statusCode,
+                title: result.Error.Code,
+                detail: result.Error.Description
+            );
+        }
+
+        return Ok(result.Value);
     }
 
     [HttpGet("me")]

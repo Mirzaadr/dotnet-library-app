@@ -8,6 +8,7 @@ public interface IAppDBContext
     DbSet<User> Users { get; }
     DbSet<Book> Books { get; }
     DbSet<BorrowRecord> BorrowRecords { get; }
+    DbSet<RefreshToken> RefreshTokens { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
