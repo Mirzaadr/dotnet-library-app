@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import BookCoverSvg from "./BookCoverSvg";
+import { Image } from "@imagekit/react";
 // import config from "@/lib/config";
 
 type BookCoverVariant = "extraSmall" | "small" | "medium" | "regular" | "wide";
@@ -40,11 +41,21 @@ const BookCover = ({
         className="absolute z-10"
         style={{ left: "12%", width: "87.5%", height: "88%" }}
       >
-        <img
-          src={coverImage}
-          alt="book-cover"
-          className="rounded-sm object-fill"
-        />
+        {coverImage.startsWith("http") ? (
+          <img
+            src={coverImage}
+            alt="book-cover"
+            className="rounded-sm object-fill"
+          />
+        ) : (
+          <Image
+            src={coverImage}
+            urlEndpoint="https://ik.imagekit.io/mirzaadr"
+            alt="book-cover"
+            fill
+            className="rounded-sm object-fill"
+          />
+        )}
       </div>
     </div>
   );
