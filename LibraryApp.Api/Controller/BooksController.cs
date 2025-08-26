@@ -45,7 +45,7 @@ public class BooksController : ControllerBase
                 detail: $"No book found with ID {id}"
             );
         }
-        return Ok(bookResult.Value.Adapt<BookResponse>());
+        return Ok(bookResult.Value.Adapt<BookDetailResponse>());
     }
 
     [HttpPost] // admin, management

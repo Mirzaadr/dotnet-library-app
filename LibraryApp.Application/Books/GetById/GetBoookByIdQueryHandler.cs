@@ -28,8 +28,10 @@ public class GetBooksQueryHandler : IRequestHandler<GetBookByIdQuery, Result<Get
                 Rating = book.Rating,
                 CoverUrl = book.CoverUrl,
                 CoverColor = book.CoverColor,
+                Description = book.Description,
                 TotalCopies = book.TotalCopies,
                 AvailableCopies = book.AvailableCopies,
+                VideoUrl = book.VideoUrl,
                 Summary = book.Summary,
                 CreatedAt = book.CreatedAt,
                 UpdatedAt = book.UpdatedAt
