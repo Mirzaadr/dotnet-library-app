@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authApi } from "./api";
+import { authApi, bookApi } from "./api";
 import authReducer from "./auth/authSlice";
 import themeReducer from "./theme/themeSlice";
 
@@ -8,9 +8,10 @@ const store = configureStore({
     auth: authReducer,
     theme: themeReducer,
     [authApi.reducerPath]: authApi.reducer,
+    [bookApi.reducerPath]: bookApi.reducer,
   },
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(authApi.middleware);
+    return getDefaultMiddleware().concat(authApi.middleware).concat(bookApi.middleware);
   },
 });
 

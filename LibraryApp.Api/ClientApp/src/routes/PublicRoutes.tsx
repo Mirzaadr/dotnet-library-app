@@ -12,7 +12,7 @@ const PublicRoutes = () => (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/library" element={<Library />} />
-      <Route path="/book/:id" element={<BookDetail />} />
+      <Route path="/books/:id" element={<BookDetail />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/history" element={<BorrowHistory />} />
 

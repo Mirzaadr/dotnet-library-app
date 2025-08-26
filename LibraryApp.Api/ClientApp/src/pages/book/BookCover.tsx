@@ -45,7 +45,7 @@ const BookCover = ({
           <img
             src={coverImage}
             alt="book-cover"
-            className="rounded-sm object-fill"
+            className="rounded-sm object-cover w-full h-full"
           />
         ) : (
           <Image
@@ -53,7 +53,7 @@ const BookCover = ({
             urlEndpoint="https://ik.imagekit.io/mirzaadr"
             alt="book-cover"
             fill
-            className="rounded-sm object-fill"
+            className="rounded-sm object-fill h-full w-full"
           />
         )}
       </div>

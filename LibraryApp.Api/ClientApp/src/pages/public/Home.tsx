@@ -88,7 +88,7 @@ const dummyBook: Book = {
 };
 
 const Home = () => {
-  const { data: books, isLoading } = useGetBooksQuery();
+  const { data: books, isLoading } = useGetBooksQuery({});
   return (
     <div>
       <BookOverview {...dummyBook} userId="" />

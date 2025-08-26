@@ -72,26 +72,34 @@ export const authApi = createApi({
         method: "GET",
       }),
     }),
-    getBooks: builder.query<Book[], void>({
-      query: () => ({
-        url: "/v1/books",
-        method: "GET",
-      }),
-    }),
   }),
 });
 
-// export const bookApi = createApi({
-//   reducerPath: "bookApi",
-//   baseQuery: baseQueryWithReauth,
-//   endpoints: (builder) => ({
-//     getUser: builder.query<any, void>({
-//       query: () => ({
-//         url: "/v1/books",
-//         method: "GET"
-//       })
-//     })
-//   })
-// })
+interface GetBooksParams {
+  page?: number | null;
+  search?: string | null;
+  sortBy?: string | null;
+}
 
-export const { useGetBooksQuery, useGetUserQuery } = authApi;
+export const bookApi = createApi({
+  reducerPath: "bookApi",
+  baseQuery: baseQueryWithReauth,
+  endpoints: (builder) => ({
+    getBooks: builder.query<Book[], GetBooksParams>({
+      query: ({ page, search, sortBy }) => ({
+        url: "/v1/books",
+        method: "GET",
+        params: { page, search, sortBy },
+      }),
+    }),
+    getBookById: builder.query<Book, string>({
+      query: (id: string) => ({
+        url: `/v1/books/${id}`,
+        method: "GET",
+    }),
+  }),
+  })
+})
+
+export const { useGetUserQuery } = authApi;
+export const { useGetBooksQuery, useGetBookByIdQuery } = bookApi;
