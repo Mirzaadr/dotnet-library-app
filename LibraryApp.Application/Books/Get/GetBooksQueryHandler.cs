@@ -19,7 +19,17 @@ public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, Result<List<G
 
         if (!string.IsNullOrEmpty(query.SearchTerm))
         {
-            bookQuery = bookQuery.Where(b => b.Title.Contains(query.SearchTerm) || b.Author.Contains(query.SearchTerm));
+            // bookQuery = bookQuery.Where(b => b.Title.Contains(query.SearchTerm) || b.Author.Contains(query.SearchTerm));
+            var searchTerms = query.SearchTerm
+                .Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                .Select(term => term.ToLower())
+                .ToList();
+
+            bookQuery = bookQuery.Where(book =>
+                searchTerms.All(term => book.Title != null && book.Title.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                searchTerms.All(term => book.Author != null && book.Author.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                searchTerms.All(term => book.Genre != null && book.Genre.Contains(term, StringComparison.OrdinalIgnoreCase))
+            );
         }
 
         var books = await bookQuery
