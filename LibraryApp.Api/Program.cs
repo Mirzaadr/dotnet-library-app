@@ -9,6 +9,15 @@ builder.Services
     .AddApplication()
     .AddPresentation();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "allowedOrigins",
+                      policy  =>
+                      {
+                          policy.WithOrigins("http://localhost:3000");
+                      });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -19,6 +28,8 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler("/error");
 app.UseStatusCodePages();
 app.UseHttpsRedirection();
+
+app.UseCors("allowedOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
