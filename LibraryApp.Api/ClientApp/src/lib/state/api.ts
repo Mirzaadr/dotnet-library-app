@@ -77,6 +77,7 @@ export const authApi = createApi({
 
 interface GetBooksParams {
   page?: number | null;
+  size?: number | null;
   search?: string | null;
   sortBy?: string | null;
 }
@@ -86,10 +87,15 @@ export const bookApi = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     getBooks: builder.query<Book[], GetBooksParams>({
-      query: ({ page, search, sortBy }) => ({
+      query: ({ page, size, search, sortBy }) => ({
         url: "/v1/books",
         method: "GET",
-        params: { page, search, sortBy },
+        params: { 
+          page: page || 1, 
+          pageSize: size || undefined, 
+          search: search || undefined, 
+          sortBy: sortBy || undefined 
+        },
       }),
     }),
     getBookById: builder.query<Book, string>({

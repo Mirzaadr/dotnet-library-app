@@ -52,7 +52,7 @@ const BookCover = ({
             src={coverImage}
             urlEndpoint="https://ik.imagekit.io/mirzaadr"
             alt="book-cover"
-            fill
+            fill="true"
             className="rounded-sm object-fill h-full w-full"
           />
         )}
