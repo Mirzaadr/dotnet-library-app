@@ -19,10 +19,10 @@ try {
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    // port: 3002,
+    port: 3000,
     proxy: {
       "/api": {
-        target: "http://localhost:5001", //backendUrl,
+        target: "http://localhost:3001", //backendUrl,
         changeOrigin: true,
         // secure: backendUrl.startsWith("https://") ? false : true,
         secure: false,

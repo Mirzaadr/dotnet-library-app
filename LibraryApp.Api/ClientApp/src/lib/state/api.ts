@@ -9,7 +9,7 @@ import type { RootState } from "./store";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type { Book } from "@/types/Book";
 
-const BASE_URL_API = "http://localhost:5001/api";
+const BASE_URL_API = "http://localhost:3001/api";
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL_API,
