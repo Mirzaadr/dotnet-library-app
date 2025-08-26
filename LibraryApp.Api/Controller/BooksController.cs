@@ -24,7 +24,7 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet] // public
-    public async Task<IActionResult> GetAllBooks(string search, string sortBy, int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetAllBooks(int page = 1, int pageSize = 10, string? search = null, string? sortBy = null)
     {
         var query = new GetBooksQuery(page, pageSize, search, sortBy);
         var books = await _mediator.Send(query);
