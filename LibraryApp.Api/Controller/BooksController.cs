@@ -24,9 +24,9 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet] // public
-    public async Task<IActionResult> GetAllBooks(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> GetAllBooks(string search, string sortBy, int page = 1, int pageSize = 10)
     {
-        var query = new GetBooksQuery(page, pageSize, null);
+        var query = new GetBooksQuery(page, pageSize, search, sortBy);
         var books = await _mediator.Send(query);
         return Ok(books.Value.Adapt<List<BookResponse>>());
     }
@@ -45,7 +45,7 @@ public class BooksController : ControllerBase
                 detail: $"No book found with ID {id}"
             );
         }
-        return Ok(bookResult.Value.Adapt<BookResponse>());
+        return Ok(bookResult.Value.Adapt<BookDetailResponse>());
     }
 
     [HttpPost] // admin, management
