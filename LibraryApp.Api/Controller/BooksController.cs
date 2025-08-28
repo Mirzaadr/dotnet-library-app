@@ -1,3 +1,4 @@
+using LibraryApp.Api.Extensions;
 using LibraryApp.Api.Models;
 using LibraryApp.Application.Books.Create;
 using LibraryApp.Application.Books.Delete;
@@ -28,7 +29,8 @@ public class BooksController : ControllerBase
     {
         var query = new GetBooksQuery(page, pageSize, search, sortBy);
         var books = await _mediator.Send(query);
-        return Ok(books.Value.Adapt<List<BookResponse>>());
+        Response.AddPaginationHeader(page, pageSize, books.Value.TotalCount, books.Value.TotalPages);
+        return Ok(books.Value.Items.Adapt<List<BookResponse>>());
     }
 
     [HttpGet("{id}")] // public
