@@ -5,27 +5,28 @@ import Markdown from "react-markdown";
 import BookOverview from "../book/BookOverview";
 import { Skeleton } from "@/components/ui/skeleton";
 import BookList from "./_components/BookList";
+import config from "@/lib/config";
 
 const BookDetail = () => {
   const { id: bookId } = useParams<{ id: string }>();
   const { data: bookDetails, isLoading } = useGetBookByIdQuery(bookId || "");
-  
+
   if (isLoading) return <LoadingPage />;
   if (!bookDetails) return <div>Book not found</div>;
-  
+
   return (
     <>
-      <BookOverview {...bookDetails} userId="" fullDescription/>
+      <BookOverview {...bookDetails} userId="" fullDescription />
 
       <div className="book-details">
         <div className="flex-1">
           <section className="flex flex-col gap-7">
             <h3>Video</h3>
             {/* <BookVideo videoUrl={bookDetails.videoUrl} /> */}
-            <Video 
-              urlEndpoint="https://ik.imagekit.io/mirzaadr" 
-              src={bookDetails.videoUrl} 
-              controls={true} 
+            <Video
+              urlEndpoint={config.env.imageKit.urlEndpoint}
+              src={bookDetails.videoUrl}
+              controls={true}
               className="w-full rounded-xl"
             />
           </section>
@@ -40,8 +41,10 @@ const BookDetail = () => {
         <div className="flex-1">
           <h3>More Books</h3>
 
-          <RecommendedBooks genre={bookDetails.genre} author={bookDetails.author} />
-
+          <RecommendedBooks
+            genre={bookDetails.genre}
+            author={bookDetails.author}
+          />
         </div>
       </div>
     </>

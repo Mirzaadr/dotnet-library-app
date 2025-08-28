@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import BookCoverSvg from "./BookCoverSvg";
 import { Image } from "@imagekit/react";
+import config from "@/lib/config";
 // import config from "@/lib/config";
 
 type BookCoverVariant = "extraSmall" | "small" | "medium" | "regular" | "wide";
@@ -50,7 +51,7 @@ const BookCover = ({
         ) : (
           <Image
             src={coverImage}
-            urlEndpoint="https://ik.imagekit.io/mirzaadr"
+            urlEndpoint={config.env.imageKit.urlEndpoint}
             alt="book-cover"
             fill="true"
             className="rounded-sm object-fill h-full w-full"
