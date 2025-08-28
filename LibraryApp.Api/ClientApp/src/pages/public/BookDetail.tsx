@@ -48,17 +48,15 @@ const BookDetail = () => {
   );
 };
 
-const RecommendedBooks = ({ genre, author } : { genre: string; author: string; }) => {
-  const { data: recommended, isLoading: isLoadingRecom } = useGetBooksQuery({ search: `${genre}`, size: 6 });
+const RecommendedBooks = ({ genre }: { genre: string; author: string }) => {
+  const { data: recommended, isLoading: isLoadingRecom } = useGetBooksQuery({
+    search: `${genre}`,
+    size: 6,
+  });
 
-  if (isLoadingRecom) return <BookList.Skeleton pageSize={6} />
-  return (
-    <BookList
-      books={recommended || []}
-    />
-  )
-
-}
+  if (isLoadingRecom) return <BookList.Skeleton pageSize={6} />;
+  return <BookList books={recommended?.data || []} />;
+};
 
 const LoadingPage = () => {
   return (

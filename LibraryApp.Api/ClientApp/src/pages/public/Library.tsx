@@ -9,15 +9,20 @@ const getPageFromParams = (params: URLSearchParams): number => {
   const pageParam = params.get("page");
   const parsedPage = pageParam ? parseInt(pageParam, 10) : NaN;
   return !isNaN(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-}
+};
 
 const Library = () => {
-  let [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const page = getPageFromParams(searchParams);
   const search = searchParams.get("search");
   const sortBy = searchParams.get("sortBy");
 
-  const { data: books, isLoading } = useGetBooksQuery({ page, search, sortBy});
+  const { data: response, isLoading } = useGetBooksQuery({
+    page,
+    search,
+    sortBy,
+    size: 12,
+  });
 
   return (
     <>
@@ -46,32 +51,32 @@ const Library = () => {
         {isLoading ? (
           <BookList.Skeleton pageSize={12} />
         ) : (
-            <BookList
-              books={books || []}
-              emptyPage={
-                <ul className="book-list justify-center items-center min-h-[331px] md:min-h-[662px]">
-                  <li id="not-found">
-                    <h4>No Results found</h4>
-                    <p>
-                      We couldn&apos;t find anybooks matching your search.
-                      <br />
-                      Try using different keywords or titles
-                    </p>
-                    <Button
-                      onClick={async () => {
-                        // "use server";
-                        // redirect("/library");
-                      }}
-                      className="not-found-btn"
-                    >
-                      Clear Search
-                    </Button>
-                  </li>
-                </ul>
-              }
-            />
+          <BookList
+            books={response?.data || []}
+            emptyPage={
+              <ul className="book-list justify-center items-center min-h-[331px] md:min-h-[662px]">
+                <li id="not-found">
+                  <h4>No Results found</h4>
+                  <p>
+                    We couldn&apos;t find anybooks matching your search.
+                    <br />
+                    Try using different keywords or titles
+                  </p>
+                  <Button
+                    onClick={async () => {
+                      // "use server";
+                      // redirect("/library");
+                    }}
+                    className="not-found-btn"
+                  >
+                    Clear Search
+                  </Button>
+                </li>
+              </ul>
+            }
+          />
         )}
-        <Pagination page={page} count={(books?.length || 0) * 2} />
+        <Pagination page={page} count={response?.pagination?.totalItems || 0} />
       </section>
     </>
   );

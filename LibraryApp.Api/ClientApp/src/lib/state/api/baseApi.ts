@@ -4,12 +4,14 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
-import { adjustUsedToken, authTokenChange, logoutUser } from "./auth/authSlice";
-import type { RootState } from "./store";
-import { createApi } from "@reduxjs/toolkit/query/react";
-import type { Book } from "@/types/Book";
+import {
+  adjustUsedToken,
+  authTokenChange,
+  logoutUser,
+} from "../auth/authSlice";
+import type { RootState } from "../store";
 
-const BASE_URL_API = "http://localhost:3001/api";
+const BASE_URL_API = "/api";
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL_API,
@@ -61,51 +63,3 @@ export const baseQueryWithReauth: BaseQueryFn<
   }
   return result;
 };
-
-export const authApi = createApi({
-  reducerPath: "authApi",
-  baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({
-    getUser: builder.query<any, void>({
-      query: () => ({
-        url: "/v1/user",
-        method: "GET",
-      }),
-    }),
-  }),
-});
-
-interface GetBooksParams {
-  page?: number | null;
-  size?: number | null;
-  search?: string | null;
-  sortBy?: string | null;
-}
-
-export const bookApi = createApi({
-  reducerPath: "bookApi",
-  baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({
-    getBooks: builder.query<Book[], GetBooksParams>({
-      query: ({ page, size, search, sortBy }) => ({
-        url: "/v1/books",
-        method: "GET",
-        params: { 
-          page: page || 1, 
-          pageSize: size || undefined, 
-          search: search || undefined, 
-          sortBy: sortBy || undefined 
-        },
-      }),
-    }),
-    getBookById: builder.query<Book, string>({
-      query: (id: string) => ({
-        url: `/v1/books/${id}`,
-        method: "GET",
-    }),
-  }),
-  })
-})
-
-export const { useGetUserQuery } = authApi;
-export const { useGetBooksQuery, useGetBookByIdQuery } = bookApi;

@@ -11,7 +11,10 @@ const store = configureStore({
     [bookApi.reducerPath]: bookApi.reducer,
   },
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(authApi.middleware).concat(bookApi.middleware);
+    return getDefaultMiddleware().concat(
+      authApi.middleware,
+      bookApi.middleware
+    );
   },
 });
 

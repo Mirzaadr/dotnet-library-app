@@ -98,7 +98,7 @@ const Home = () => {
       ) : (
         <BookList
           title="Recommended"
-          books={books || []}
+          books={books?.data || []}
           containerClassname="mt-28"
         />
       )}
