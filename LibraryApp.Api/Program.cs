@@ -1,6 +1,8 @@
 using LibraryApp.Infrastructure;
 using LibraryApp.Application;
 using LibraryApp.Api;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,9 @@ builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddApplication()
     .AddPresentation();
+
+builder.Services.AddHealthChecks()
+                .AddNpgSql(builder.Configuration.GetConnectionString("AppDb")!);
 
 builder.Services.AddCors(options =>
 {
@@ -34,5 +39,9 @@ app.UseCors("allowedOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 app.MapControllers();
 app.Run();
