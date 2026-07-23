@@ -10,6 +10,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using LibraryApp.Application.CrudEngine;
+using LibraryApp.Domain.Books;
+
 namespace LibraryApp.Api.Controller;
 
 [ApiController]
@@ -27,9 +30,10 @@ public class BooksController : ControllerBase
     [HttpGet] // public
     public async Task<IActionResult> GetAllBooks(int page = 1, int pageSize = 10, string? search = null, string? sortBy = null)
     {
-        var query = new GetBooksQuery(page, pageSize, search, sortBy);
+        // var query = new GetBooksQuery(page, pageSize, search, sortBy);
+        var query = new GetPagedQuery<Book, BookId>(page, pageSize, sortBy, false);
         var books = await _mediator.Send(query);
-        Response.AddPaginationHeader(page, pageSize, books.Value.TotalCount, books.Value.TotalPages);
+        Response.AddPaginationHeader(page, pageSize, books.Value.TotalCount, books.Value.PageSize);
         return Ok(books.Value.Items.Adapt<List<BookResponse>>());
     }
 
