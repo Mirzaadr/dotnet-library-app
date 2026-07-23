@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Application.Books.Get;
 
-public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, Result<List<GetBooksResponse>>>
+public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, Result<PagedList<GetBooksResponse>>>
 {
     private readonly IAppDBContext _context;
 
@@ -13,7 +13,7 @@ public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, Result<List<G
         _context = context;
     }
 
-    public async Task<Result<List<GetBooksResponse>>> Handle(GetBooksQuery query, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<GetBooksResponse>>> Handle(GetBooksQuery query, CancellationToken cancellationToken)
     {
         var bookQuery = _context.Books.AsQueryable();
 
@@ -31,10 +31,8 @@ public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, Result<List<G
             );
         }
 
-        var books = await bookQuery
+        var mappedQuery = bookQuery
           .OrderBy(b => b.CreatedAt)
-          .Skip((query.PageNumber - 1) * query.PageSize)
-          .Take(query.PageSize)
           .Select(book => new GetBooksResponse
           {
               Id = book.Id.Value,
@@ -49,8 +47,9 @@ public class GetBooksQueryHandler : IRequestHandler<GetBooksQuery, Result<List<G
               Summary = book.Summary,
               CreatedAt = book.CreatedAt,
               UpdatedAt = book.UpdatedAt
-          })
-          .ToListAsync(cancellationToken);
+          });
+
+        var books = await PagedList<GetBooksResponse>.CreateAsync(mappedQuery, query.PageNumber, query.PageSize);
 
         return books;
     }

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace LibraryApp.Application.Books.Get;
 
-public class GetBooksQuery : IRequest<Result<List<GetBooksResponse>>>
+public class GetBooksQuery : IRequest<Result<PagedList<GetBooksResponse>>>
 {
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
